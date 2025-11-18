@@ -21,7 +21,7 @@ def generate_prompts_from_prompt(text: str) -> list[str]:
     system_prompt = read_prompt("prompt_generator_prompt")
 
     client = genai.Client(api_key=api_key)
-    input_text = "Make a 30-second promo video for a fitness app in a modern, energetic style"
+    input_text = text
 
     response = client.models.generate_content(
         model="gemini-2.5-pro",
