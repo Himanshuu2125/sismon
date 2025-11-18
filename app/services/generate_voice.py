@@ -14,12 +14,11 @@ def save_wav(filename, pcm, channels=1, rate=24000, sample_width=2):
 # Generate voice using Google TTS
 def generate_voice_from_segments(segments, out_file="output.wav"):
     # Initialize client
-    # NOTE: Replace 'YOUR_API_KEY' with your actual key if not using env variables
     api_key = os.environ.get("GEMINI_API_KEY") 
     client = genai.Client(api_key=api_key)
 
     # 1. Construct a prompt that explicitly explains the timing
-    prompt_text = "Generate a voiceover for a fitness advertisement. You must strictly adhere to the following timing constraints and pacing:\n\n"
+    prompt_text = "Generate a voiceover for a advertisement. You must strictly adhere to the following timing constraints and pacing:\n\n"
     
     for seg in segments:
         duration = seg['end_time'] - seg['start_time']
@@ -57,24 +56,24 @@ def generate_voice_from_segments(segments, out_file="output.wav"):
     else:
         print("Error: No audio data returned.")
 
-# ----------------------
-# Example usage:
-# ----------------------
+# # ----------------------
+# # Example usage:
+# # ----------------------
 
-segments = [
-    {'start_time': 0.0, 'end_time': 4.0, 'script': 'Every journey is unique. Every goal is personal.'},
-    {'start_time': 4.0, 'end_time': 6.0, 'script': 'With a plan built just for you.'},
-    {'start_time': 6.0, 'end_time': 10.0, 'script': 'Follow guided workouts that fit your life, wherever you are.'},
-    {'start_time': 10.0, 'end_time': 14.0, 'script': 'Push your limits. Smash your goals.'},
-    {'start_time': 14.0, 'end_time': 16.0, 'script': 'And celebrate every single victory.'},
-    {'start_time': 16.0, 'end_time': 20.0, 'script': 'Find your strength, and find your community.'},
-    {'start_time': 20.0, 'end_time': 24.0, 'script': 'Fuel your body right, and get the support that keeps you going.'},
-    {'start_time': 24.0, 'end_time': 28.0, 'script': 'This is more than fitness. This is your transformation.'},
-    {'start_time': 28.0, 'end_time': 30.0, 'script': '(Pause)'},
-    {'start_time': 30.0, 'end_time': 32.0, 'script': 'Elevate Your Fitness. Download now.'}
-]
+# segments = [
+#     {'start_time': 0.0, 'end_time': 4.0, 'script': 'Every journey is unique. Every goal is personal.'},
+#     {'start_time': 4.0, 'end_time': 6.0, 'script': 'With a plan built just for you.'},
+#     {'start_time': 6.0, 'end_time': 10.0, 'script': 'Follow guided workouts that fit your life, wherever you are.'},
+#     {'start_time': 10.0, 'end_time': 14.0, 'script': 'Push your limits. Smash your goals.'},
+#     {'start_time': 14.0, 'end_time': 16.0, 'script': 'And celebrate every single victory.'},
+#     {'start_time': 16.0, 'end_time': 20.0, 'script': 'Find your strength, and find your community.'},
+#     {'start_time': 20.0, 'end_time': 24.0, 'script': 'Fuel your body right, and get the support that keeps you going.'},
+#     {'start_time': 24.0, 'end_time': 28.0, 'script': 'This is more than fitness. This is your transformation.'},
+#     {'start_time': 28.0, 'end_time': 30.0, 'script': '(Pause)'},
+#     {'start_time': 30.0, 'end_time': 32.0, 'script': 'Elevate Your Fitness. Download now.'}
+# ]
 
 # Ensure directory exists
-os.makedirs("audios", exist_ok=True)
+# os.makedirs("audios", exist_ok=True)
 
-generate_voice_from_segments(segments, "audios/fitness_ad.wav")
+# generate_voice_from_segments(segments, "public/audios/a.wav")
