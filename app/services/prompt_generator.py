@@ -1,4 +1,4 @@
-import google.generativeai as genai
+from google import genai
 from typing import Literal
 from app.utils import read_prompt
 from dotenv import load_dotenv

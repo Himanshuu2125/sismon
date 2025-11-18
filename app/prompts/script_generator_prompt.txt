@@ -61,12 +61,12 @@ Calculate timestamps by accumulating the duration of previous segments.
 ## Example Analysis
 
 For a segment showing someone achieving a fitness goal:
-- ❌ BAD: "The app helps users achieve their fitness goals through personalized tracking"
-- ✅ GOOD: "Your goals. Your victories. All within reach."
+- BAD: "The app helps users achieve their fitness goals through personalized tracking"
+- GOOD: "Your goals. Your victories. All within reach."
 
 For a segment showing app features:
-- ❌ BAD: "Our app has charts and graphs"
-- ✅ GOOD: "Watch your progress soar. Every workout, tracked. Every milestone, celebrated."
+- BAD: "Our app has charts and graphs"
+- GOOD: "Watch your progress soar. Every workout, tracked. Every milestone, celebrated."
 
 ## Quality Checklist
 
