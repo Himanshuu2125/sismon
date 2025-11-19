@@ -1,5 +1,5 @@
 from moviepy import AudioFileClip,VideoFileClip,afx
-def add_audio(video_path, audio_path, output_path):
+def add_audio_to_video(video_path, audio_path, output_path):
     """
     Adds or replaces the audio track of a video.
 
