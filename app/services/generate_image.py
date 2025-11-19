@@ -55,7 +55,7 @@ def generate_image_from_prompt(prompt, segment_number, output_dir="public/media"
                 # Convert inline data to PIL Image
                 generated_image = part.as_image()
                 
-                filename = f"{segment_number:02d}.png"
+                filename = f"{segment_number}.png"
                 filepath = os.path.join(output_dir, filename)
                 
                 # Save the image
