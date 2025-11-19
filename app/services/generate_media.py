@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 from app.services.generate_image import generate_image_from_prompt
+from app.services.generate_video import generate_video_from_prompt
 
 load_dotenv()
 
@@ -46,25 +47,26 @@ def generate_media_sequence(segments, output_dir="public/media"):
         print("⚠️  WARNING: Video count should be 2 or 4 (even number)")
     
     # Generate each segment
+    a,b=["",0,""],[]
     for segment in segments:
         segment_num = segment['segment_number']
         media_type = segment['type']
         duration = segment['duration_seconds']
         prompt = segment['prompt']
-        
         if media_type == 'image':
             filepath = generate_image_from_prompt(
                 prompt=prompt,
                 segment_number=segment_num,
                 output_dir=output_dir
             )
-        # elif media_type == 'video':
-        #     filepath = generate_video(
-        #         prompt=prompt,
-        #         segment_number=segment_num,
-        #         duration_seconds=duration,
-        #         output_dir=output_dir
-        #     )
+        elif media_type == 'video':
+            if(a[0]==""):
+                a[0]+=segment_num
+                a[1]+=duration
+                a[2]+=prompt
+            else:
+                b.append((a[0]+segment_num,a[1]+duration,a[2]+prompt))
+                a=["",0,""]
         # else:
         #     print(f"✗ Unknown media type: {media_type}")
         #     filepath = None
@@ -72,6 +74,23 @@ def generate_media_sequence(segments, output_dir="public/media"):
         results.append({
             'segment_number': segment_num,
             'type': media_type,
+            'duration_seconds': duration,
+            'filepath': filepath,
+            'status': 'success' if filepath else 'failed'
+        })
+    for segment in b:
+        segment_num = segment[0]
+        duration = segment[1]
+        prompt = segment[2]
+        filepath = generate_video_from_prompt(
+            prompt=prompt,
+            segment_number=segment_num,
+            duration_seconds=duration,
+            output_dir=output_dir
+        )
+        results.append({
+            'segment_number': segment_num,
+            'type': 'video',
             'duration_seconds': duration,
             'filepath': filepath,
             'status': 'success' if filepath else 'failed'
