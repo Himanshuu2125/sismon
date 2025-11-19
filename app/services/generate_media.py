@@ -61,11 +61,11 @@ def generate_media_sequence(segments, output_dir="public/media"):
             )
         elif media_type == 'video':
             if(a[0]==""):
-                a[0]+=segment_num
+                a[0]+=str(segment_num)
                 a[1]+=duration
                 a[2]+=prompt
             else:
-                b.append((a[0]+segment_num,a[1]+duration,a[2]+prompt))
+                b.append((a[0]+str(segment_num),a[1]+duration,a[2]+prompt))
                 a=["",0,""]
         # else:
         #     print(f"✗ Unknown media type: {media_type}")
