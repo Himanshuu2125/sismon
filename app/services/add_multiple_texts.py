@@ -1,10 +1,11 @@
 from moviepy import VideoFileClip, CompositeVideoClip, vfx, TextClip
+import os
 
 def add_multiple_texts(
     video_path,
     output_path,
     texts,
-    font='E:/hackathon/sismon/fonts/font1.otf',
+    font=os.path.join(os.getcwd(), "public/fonts/font1.ttf"),
     font_size=70,
     color='white',
     bg_color=None,

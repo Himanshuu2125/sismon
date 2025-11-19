@@ -5,3 +5,5 @@ public/audios/*
 public/media/*
 !public/audios/.gitkeep
 !public/media/.gitkeep
+public/outputs/*
+!public/outputs/.gitkeep

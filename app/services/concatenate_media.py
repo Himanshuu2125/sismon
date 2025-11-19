@@ -1,7 +1,7 @@
 from moviepy import VideoFileClip, ImageClip, concatenate_videoclips
-from apply_pan_effect import apply_pan_effect
-from resize_and_center import resize_and_center
-def concatenate_media(media_list, output_filename="outputs/output.mp4", orientation='portrait'):
+from app.services.apply_pan_effect import apply_pan_effect
+from app.services.resize_and_center import resize_and_center
+def concatenate_media(media_list, output_filename="public/outputs/output.mp4", orientation='portrait'):
     """
     Concatenates images and video clips based on the provided list.
     
