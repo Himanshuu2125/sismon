@@ -1,0 +1,80 @@
+from google import genai
+from google.genai import types
+from PIL import Image
+from io import BytesIO
+import os
+from dotenv import load_dotenv
+from datetime import datetime
+from app.services.generate_image import generate_image_from_prompt
+
+load_dotenv()
+
+api_key = os.getenv("GEMINI_API_KEY")
+
+client = genai.Client(api_key=api_key)
+
+def generate_media_sequence(segments, output_dir="public/media"):
+    """
+    Generate all media (images and videos) from a list of segments
+    
+    Args:
+        segments: List of segment dictionaries with keys:
+                    - segment_number (int)
+                    - type (str): "image" or "video"
+                    - duration_seconds (int)
+                    - prompt (str)
+        output_dir: Directory to save all generated media
+        
+    Returns:
+        List of dictionaries with segment info and file paths
+    """
+    print("\n" + "="*80)
+    print("STARTING MEDIA GENERATION PIPELINE")
+    print("="*80)
+    print(f"Total segments to generate: {len(segments)}")
+    
+    # # Create output directory with timestamp
+    # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # output_dir = os.path.join(output_dir, f"sequence_{timestamp}")
+    
+    results = []
+    
+    # Validate video count
+    video_count = sum(1 for s in segments if s['type'] == 'video')
+    print(f"\nVideo count: {video_count}")
+    if not (2 <= video_count <= 4 and video_count % 2 == 0):
+        print("⚠️  WARNING: Video count should be 2 or 4 (even number)")
+    
+    # Generate each segment
+    for segment in segments:
+        segment_num = segment['segment_number']
+        media_type = segment['type']
+        duration = segment['duration_seconds']
+        prompt = segment['prompt']
+        
+        if media_type == 'image':
+            filepath = generate_image_from_prompt(
+                prompt=prompt,
+                segment_number=segment_num,
+                output_dir=output_dir
+            )
+        # elif media_type == 'video':
+        #     filepath = generate_video(
+        #         prompt=prompt,
+        #         segment_number=segment_num,
+        #         duration_seconds=duration,
+        #         output_dir=output_dir
+        #     )
+        # else:
+        #     print(f"✗ Unknown media type: {media_type}")
+        #     filepath = None
+        
+        results.append({
+            'segment_number': segment_num,
+            'type': media_type,
+            'duration_seconds': duration,
+            'filepath': filepath,
+            'status': 'success' if filepath else 'failed'
+        })
+
+    return results
