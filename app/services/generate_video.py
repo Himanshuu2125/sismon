@@ -204,7 +204,7 @@ def generate_video_from_prompt(prompt, segment_number, duration_seconds=5, aspec
             "waterMark": ""  # Set to "" for no watermark, or e.g., "your-brand"
         }
         headers = {
-            "Authorization": "Bearer 153809050b42c0a4e637029579b6b637",
+            "Authorization": f"Bearer {os.getenv('KIE_API_KEY')}",
             "Content-Type": "application/json"
         }
 

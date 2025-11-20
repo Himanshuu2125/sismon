@@ -53,12 +53,12 @@ def generate_media_sequence(segments, output_dir="public/media"):
         media_type = segment['type']
         duration = segment['duration_seconds']
         prompt = segment['prompt']
-        # if media_type == 'image':
-        #     filepath = generate_image_from_prompt(
-        #         prompt=prompt,
-        #         segment_number=segment_num,
-        #         output_dir=output_dir
-        #     )
+        if media_type == 'image':
+            filepath = generate_image_from_prompt(
+                prompt=prompt,
+                segment_number=segment_num,
+                output_dir=output_dir
+            )
         if media_type == 'video':
             filepath = generate_video_from_prompt(
                 prompt=prompt,
@@ -77,13 +77,13 @@ def generate_media_sequence(segments, output_dir="public/media"):
         #     print(f"✗ Unknown media type: {media_type}")
         #     filepath = None
         
-        # results.append({
-        #     'segment_number': segment_num,
-        #     'type': media_type,
-        #     'duration_seconds': duration,
-        #     'filepath': filepath,
-        #     'status': 'success' if filepath else 'failed'
-        # })
+        results.append({
+            'segment_number': segment_num,
+            'type': media_type,
+            'duration_seconds': duration,
+            'filepath': filepath,
+            'status': 'success' if filepath else 'failed'
+        })
     # for segment in b:
     #     segment_num = segment[0]
     #     duration = segment[1]
