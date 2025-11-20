@@ -44,7 +44,7 @@ def generate_prompts_from_prompt(text: str) -> list[str]:
                         },
                         "duration_seconds": {
                             "type": "integer",
-                            "description": "Duration in seconds. For videos: always 4. For images: 2-5 seconds based on content importance"
+                            "description": "Duration in seconds. For videos: always 5. For images: 2-5 seconds based on content importance"
                         },
                         "prompt": {
                             "type": "string",
