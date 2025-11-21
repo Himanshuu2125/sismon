@@ -1,61 +1,212 @@
-from app.services import concatenate_media,add_multiple_texts
+import streamlit as st
+import time
+import os
+from pathlib import Path
 
-# # Example usage
-# if __name__ == "__main__":
-#     media_list = [
-#     ('images/img4.jpeg', 2, 'zoom_in', 1.2),          # Strong opening – zoom in on gym scene
-#     ('videos/v4.mp4', 0, 2),                         # Dynamic workout clip
-#     ('images/img5.jpeg', 2, 'left', 1.15),            # Pan left across equipment/athletes
-#     ('videos/v5.mp4', 0, 2),                         # High-energy training moment
-#     ('images/img6.jpeg', 2, 'up', 1.1),               # Pan upward for a powerful finish
-# ]
+# Import your services
+from app.services import (
+    generate_prompts_from_prompt,
+    generate_script_from_prompt,
+    generate_voice_from_segments,
+    generate_media_sequence,
+    process_media_segments,
+    concatenate_media,
+    add_multiple_texts,
+    add_audio_to_video,
+    add_bgMusic_to_video
+)
+
+# Page configuration
+st.set_page_config(
+    page_title="AI Video Generator",
+    page_icon="🎬",
+    layout="wide"
+)
+
+# Title and description
+st.title("🎬 CineMorph: AI Powered Video Generator")
+st.markdown("Generate professional videos from text prompts using AI")
+
+# Create necessary directories if they don't exist
+Path("public/audios").mkdir(parents=True, exist_ok=True)
+Path("public/media").mkdir(parents=True, exist_ok=True)
+Path("public/outputs").mkdir(parents=True, exist_ok=True)
+
+# Initialize session state
+if 'video_generated' not in st.session_state:
+    st.session_state.video_generated = False
+if 'video_path' not in st.session_state:
+    st.session_state.video_path = None
+if 'generation_time' not in st.session_state:
+    st.session_state.generation_time = 0
+
+# Input section
+st.markdown("### 📝 Enter Your Prompt")
+user_prompt = st.text_area(
+    "Describe the video you want to create:",
+    placeholder="Example: Make a 20-second promo video for a fitness app in a modern, energetic style",
+    height=100
+)
+
+# Generate button
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    generate_button = st.button("🚀 Generate Video", use_container_width=True, type="primary")
+
+# Video generation process
+if generate_button and user_prompt:
+    st.session_state.video_generated = False
+    st.session_state.video_path = None
     
-#     concatenate_media(media_list, orientation='portrait')
-#     texts = [
-#     ("Push\nYour\nLimits", 0, 2),
-#     ("Train\nHarder", 2, 4),
-#     ("Feel\nStronger", 4, 6),
-#     ("Become\nUnstoppable", 6, 8),
-#     ("Your\nFitness\nJourney\nStarts\nNow", 8, 10)
-# ]
-
-
-#     add_multiple_texts(
-#         video_path="outputs/output.mp4",
-#         output_path="outputs/output_with_texts.mp4",
-#         texts=texts,
-#         font_size=80,
-#         color=(255,255,255,255),
-#         stroke_color="black",
-#         stroke_width=3,
-#         margin=(50, 100),
+    # Progress container
+    progress_container = st.container()
     
-#     )
+    with progress_container:
+        st.markdown("### 🔄 Generating Your Video...")
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        timer_text = st.empty()
+        
+        # Start timer
+        start_time = time.time()
+        
+        try:
+            # Step 1: Generate prompts
+            status_text.text("⏳ Step 1/8: Generating prompts...")
+            progress_bar.progress(10)
+            seg = generate_prompts_from_prompt(user_prompt)
+            
+            # Step 2: Generate script
+            status_text.text("⏳ Step 2/8: Creating script...")
+            progress_bar.progress(20)
+            script = generate_script_from_prompt(seg, user_prompt)
+            
+            # Step 3: Generate voice
+            status_text.text("⏳ Step 3/8: Generating voiceover...")
+            progress_bar.progress(35)
+            audio_path = "public/audios/a.wav"
+            generate_voice_from_segments(script, audio_path)
+            
+            # Step 4: Generate media sequence
+            status_text.text("⏳ Step 4/8: Creating media sequence...")
+            progress_bar.progress(50)
+            generate_media_sequence(seg, "public/media")
+            
+            # Step 5: Process media segments
+            status_text.text("⏳ Step 5/8: Processing media segments...")
+            progress_bar.progress(60)
+            segment = process_media_segments(seg, script)
+            
+            # Step 6: Concatenate media
+            status_text.text("⏳ Step 6/8: Concatenating media...")
+            progress_bar.progress(70)
+            concatenate_media(segment[0], orientation='portrait')
+            
+            # Step 7: Add text overlays
+            status_text.text("⏳ Step 7/8: Adding text overlays...")
+            progress_bar.progress(80)
+            add_multiple_texts(
+                video_path="public/outputs/output.mp4",
+                output_path="public/outputs/output_with_texts.mp4",
+                texts=segment[1],
+                font_size=47,
+                color=(255, 255, 255, 255),
+                stroke_color="black",
+                stroke_width=3,
+                margin=(50, 100),
+            )
+            
+            # Step 8: Add audio
+            status_text.text("⏳ Step 8/8: Adding audio...")
+            progress_bar.progress(90)
+            add_audio_to_video(
+                "public/outputs/output_with_texts.mp4",
+                audio_path,
+                "public/outputs/output_with_audio.mp4"
+            )
+            
+            # Step 9: Add background music (if exists)
+            status_text.text("⏳ Final step: Adding background music...")
+            progress_bar.progress(95)
+            final_output_path = "public/outputs/final_output.mp4"
+            
+            if os.path.exists("public/audios/bgMusic.mp3"):
+                add_bgMusic_to_video(
+                    "public/outputs/output_with_audio.mp4",
+                    "public/audios/bgMusic.mp3",
+                    final_output_path,
+                    bg_volume=0.08
+                )
+            else:
+                # If no background music, use the audio version as final
+                os.rename("public/outputs/output_with_audio.mp4", final_output_path)
+            
+            # Complete
+            progress_bar.progress(100)
+            end_time = time.time()
+            generation_time = end_time - start_time
+            
+            st.session_state.video_generated = True
+            st.session_state.video_path = final_output_path
+            st.session_state.generation_time = generation_time
+            
+            status_text.empty()
+            progress_bar.empty()
+            
+            # Success message
+            st.success(f"✅ Video generated successfully in {generation_time:.2f} seconds!")
+            
+        except Exception as e:
+            st.error(f"❌ Error generating video: {str(e)}")
+            st.exception(e)
 
-from app.services import generate_prompts_from_prompt
-from app.services import generate_script_from_prompt
-from app.services import generate_voice_from_segments
-from app.services import generate_media_sequence
-from app.services import process_media_segments
-from app.services import add_audio_to_video
-seg=[{'segment_number': 1, 'type': 'image', 'duration_seconds': 2, 'prompt': "A stylish young person in their mid-20s sits alone at a small table in a modern, dimly lit coffee shop at night. They are looking down at their smartphone with a bored and uninspired expression. The coffee shop has minimalist decor with warm ambient light and a soft neon sign glowing in the background, out of focus. The shot is a medium close-up, focusing on the person's feeling of solitude and digital detachment. The color palette is moody with warm tones and deep shadows, creating a cinematic and relatable atmosphere."}, {'segment_number': 2, 'type': 'video', 'duration_seconds': 4, 'prompt': 'An extreme close-up shot of a smartphone held by a hand. The screen displays a vibrant, colorful, and modern dating app interface. For 4 seconds, a thumb performs a rapid series of swipes. The profiles are diverse, attractive, and dynamic, showing people engaged in fun activities. Each swipe is accompanied by a fluid, satisfying animation and a subtle haptic effect. The background is a stylishly blurred city scene at night with colorful bokeh lights. The motion is fast-paced and energetic, conveying excitement and possibility. The lighting on the hand and phone is sleek and professional.'}, {'segment_number': 3, 'type': 'image', 'duration_seconds': 3, 'prompt': "A beautifully composed close-up shot of a smartphone lying on a dark wooden table at a rooftop bar. The screen is brightly lit, displaying the dating app's logo and a clear, compelling call-to-action: 'Start Your Story'. In the background, the hands of the happy couple from the date are gently intertwined, slightly out of focus. The blurred city lights from the bar's view create a magical bokeh effect. The image is warm, aspirational, and focused, serving as the final brand message. High-end commercial photography style."}, {'segment_number': 4, 'type': 'video', 'duration_seconds': 4, 'prompt': 'A dynamic, fast-cut montage of a happy, stylish couple on an exciting date at night in a vibrant city. The 4-second sequence includes quick shots of them laughing while playing a brightly lit arcade game, clinking glasses at a trendy rooftop bar with a stunning skyline view, and sharing a dessert under warm string lights. Their chemistry is evident and their expressions are full of joy and connection. The camera work is handheld and energetic, with lens flares and a vibrant, saturated color grade to emphasize the fun and modern feel.'}]
+# Display generated video
+if st.session_state.video_generated and st.session_state.video_path:
+    st.markdown("---")
+    st.markdown("### 🎥 Your Generated Video")
+    
+    # Display generation time
+    st.info(f"⏱️ Generation Time: {st.session_state.generation_time:.2f} seconds")
+    
+    # Display video with custom dimensions
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        # Add custom CSS to control video size
+        st.markdown("""
+            <style>
+            .custom-video video {
+                max-width: 200px;
+                max-height: 356px;
+                width: 200px;
+                height: 356px;
+                margin: 0 auto;
+                display: block;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            </style>
+        """, unsafe_allow_html=True)
+        
+        if os.path.exists(st.session_state.video_path):
+            # Wrap video in a div with custom class
+            st.markdown('<div class="custom-video">', unsafe_allow_html=True)
+            
+            video_file = open(st.session_state.video_path, 'rb')
+            video_bytes = video_file.read()
+            st.video(video_bytes)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            # Download button
+            st.download_button(
+                label="⬇️ Download Video",
+                data=video_bytes,
+                file_name="generated_video.mp4",
+                mime="video/mp4",
+                use_container_width=True
+            )
+        else:
+            st.error("Video file not found!")
 
-script=generate_script_from_prompt(seg,"Make a 10-second promo video for a dating app in a modern, energetic style")
-generate_media_sequence(seg,'public/media')
-seg2=process_media_segments(seg,script)
-
-print(seg2)
-concatenate_media(seg2[0], orientation='portrait')    
-
-add_multiple_texts(
-        video_path="public/outputs/output.mp4",
-        output_path="public/outputs/output_with_texts.mp4",
-        texts=seg2[1],
-        font_size=80,
-        color=(255,255,255,255),
-        stroke_color="black",
-        stroke_width=3,
-        margin=(50, 100),
-    )
-# script=[{'start_time': 0.0, 'end_time': 2.0, 'script': 'Tired of the same old nights?'}, {'start_time': 2.0, 'end_time': 6.0, 'script': "It's time for something real. Something exciting. A connection that just clicks."}, {'start_time': 6.0, 'end_time': 9.0, 'script': 'This is where it all begins.'}, {'start_time': 9.0, 'end_time': 13.0, 'script': 'More laughter. More adventure. Your story is waiting.'}]
-generate_voice_from_segments(script, 'public/audios/a.wav')
+# Footer
+st.markdown("---")

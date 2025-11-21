@@ -71,7 +71,7 @@ User Prompt
 └─────────────────────────────────────────────┘
     ↓
 ┌─────────────────────────────────────────────┐
-│  6. Merge (FFmpeg)                          |
+│  6. Audio Merge (FFmpeg)                    |
 │     → Combines video + audio + subtitles    │
 └─────────────────────────────────────────────┘
     ↓
@@ -210,21 +210,45 @@ uv sync
 
 ## 🎯 Usage
 
-### Basic Usage
+**CineMorph offers two ways to generate videos:**
+
+---
+
+### 🖥️ Option 1: Terminal/Command Line Interface
+
+#### Basic Usage
 ```bash
 uv run test.py
 ```
 
-### Custom Prompt Example
+#### Custom Prompt
 
-Edit `test.py` to pass your prompt:
+Edit `test.py` to pass your custom prompt:
 ```python
 prompt = "Create a 30-second video about the journey of a coffee bean from farm to cup"
-seg=generate_prompts_from_prompt(prompt) # line 15
-script=generate_script_from_prompt(seg,prompt) #line 16
+seg = generate_prompts_from_prompt(prompt)  # line 15
+script = generate_script_from_prompt(seg, prompt)  # line 16
 ```
 
-### Output Location
+---
+
+### 🌐 Option 2: Web Interface (Streamlit)
+
+#### Launch the Streamlit UI
+```bash
+streamlit run main.py
+```
+
+This will open a web browser with an interactive interface where you can:
+- ✍️ Enter your prompt in a text box
+- 📊 Monitor the generation progress in real-time
+- 🎥 Preview and download your generated video
+
+**Access the interface at:** `http://localhost:8501`
+
+---
+
+## 📂 Output Location
 
 Generated videos will be saved in:
 ```
@@ -235,7 +259,10 @@ Intermediate files:
 ```
 public/images/    # Generated images
 public/videos/    # Generated video clips
+public/audio/     # Generated audio files
 ```
+
+---
 
 ## 🔧 Configuration
 
@@ -243,7 +270,7 @@ Customize video settings by editing the pipeline parameters:
 ```python
 # Example configurations
 FONT_SIZE = 50
-COLOR = "black" # or "blue", "red", etc
+COLOR = "black"            # or "blue", "red", etc
 ORIENTATION = "landscape"  # or "portrait"
 EFFECT_TYPE = "zoom"       # "pan", "zoom", or "none"
 ```
