@@ -142,7 +142,7 @@ def download_file(url, filename, output_dir="public/media"):
 def get_api_keys():
     """Get all available API keys from environment variables"""
     api_keys = []
-    for i in range(1, 4):  # KIE_API_KEY1 through KIE_API_KEY6
+    for i in range(1, 7):  # KIE_API_KEY1 through KIE_API_KEY6
         key = os.getenv(f'KIE_API_KEY{i}')
         if key:
             api_keys.append(key)
@@ -211,18 +211,23 @@ def generate_video_from_prompt(prompt, segment_number, duration_seconds=5, aspec
             api_data = response.json()
             
             # Check for rate limit error
-            if is_rate_limit_error(api_data):
+            # if is_rate_limit_error(api_data):
+            #     print(f"✗ Rate limit exceeded for API Key #{key_index}: {api_data.get('msg', 'Unknown error')}")
+            #     if key_index < len(api_keys):
+            #         print(f"→ Switching to next API key and retrying same video...")
+            #         continue  # Try next API key for the SAME video
+            #     else:
+            #         print("✗ All API keys exhausted")
+            #         return None
+            
+            if api_data.get("code") != 200:
                 print(f"✗ Rate limit exceeded for API Key #{key_index}: {api_data.get('msg', 'Unknown error')}")
                 if key_index < len(api_keys):
-                    print(f"→ Switching to next API key...")
-                    continue
+                    print(f"→ Switching to next API key and retrying same video...")
+                    continue  # Try next API key for the SAME video
                 else:
                     print("✗ All API keys exhausted")
                     return None
-            
-            if api_data.get("code") != 200:
-                print(f"✗ API error starting job: {api_data.get('msg', 'Unknown error')}")
-                return None
             
             task_id = api_data.get("data", {}).get("taskId")
             if not task_id:
