@@ -43,6 +43,14 @@ def process_media_segments(visual_segments, script_segments):
         start_time = item['start_time'] if isinstance(item, dict) else item.start_time
         end_time = item['end_time'] if isinstance(item, dict) else item.end_time
 
+        # Remove all newlines and reformat with newline after every 6 words
+        script_text = script_text.replace('\n', ' ')
+        words = script_text.split()
+        formatted_lines = []
+        for i in range(0, len(words), 5):
+            formatted_lines.append(' '.join(words[i:i+5]))
+        script_text = '\n'.join(formatted_lines)
+
         texts.append((script_text, start_time, end_time))
 
     return media_list, texts

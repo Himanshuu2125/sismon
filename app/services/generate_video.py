@@ -142,7 +142,7 @@ def download_file(url, filename, output_dir="public/media"):
 def get_api_keys():
     """Get all available API keys from environment variables"""
     api_keys = []
-    for i in range(1, 7):  # KIE_API_KEY1 through KIE_API_KEY6
+    for i in range(1, 5):  # KIE_API_KEY1 through KIE_API_KEY6
         key = os.getenv(f'KIE_API_KEY{i}')
         if key:
             api_keys.append(key)

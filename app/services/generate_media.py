@@ -1,10 +1,6 @@
 from google import genai
-from google.genai import types
-from PIL import Image
-from io import BytesIO
 import os
 from dotenv import load_dotenv
-from datetime import datetime
 from app.services.generate_image import generate_image_from_prompt
 from app.services.generate_video import generate_video_from_prompt
 
