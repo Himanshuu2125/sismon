@@ -55,7 +55,13 @@ MoviePy is used to combine all clips into a single video. FFmpeg is used interna
 Narration lines are placed on top of the video as subtitles.
 
 ### 8. Voice Generation and Processing
-The narration is turned into speech using Gemini TTS. Librosa and SoundFile help clean the audio and adjust it to the correct timing.
+Gemini TTS generates the narration audio.
+
+Audio processing uses FFmpeg only to:
+      -Stretch or speed up (using atempo)
+      -Trim (-t)
+      -Pad with silence (apad)
+      -Re-encode (WAV/MP3)
 
 ### 9. Final Export
 MoviePy and FFmpeg merge the audio with the video and output the final MP4 file into the `public/outputs` directory.
@@ -64,12 +70,12 @@ MoviePy and FFmpeg merge the audio with the video and output the final MP4 file 
 
 ## Technologies Used
 
-* Gemini text models for prompt breakdown and script generation
-* Gemini image and video models for media creation
-* Gemini TTS for voice generation
-* MoviePy for video handling and composition
-* FFmpeg for encoding and exporting videos
-* Librosa and SoundFile for processing and cleaning audio
+* Gemini text models — prompt breakdown, segment generation, narration creation
+* Gemini image & video models — all visual asset generation
+* Gemini TTS — narration voice synthesis
+* MoviePy — assembling media, applying effects, composing final video
+* FFmpeg — encoding, audio stretching, trimming, padding, final export
+* Python utilities — orchestration, file handling, folder management
 
 ---
 
