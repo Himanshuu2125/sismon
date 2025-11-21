@@ -58,10 +58,10 @@ Narration lines are placed on top of the video as subtitles.
 Gemini TTS generates the narration audio.
 
 Audio processing uses FFmpeg only to:
-      -Stretch or speed up (using atempo)
-      -Trim (-t)
-      -Pad with silence (apad)
-      -Re-encode (WAV/MP3)
+- Stretch or speed up (using `atempo`)
+- Trim (`-t`)
+- Pad with silence (`apad`)
+- Re-encode (WAV/MP3)
 
 ### 9. Final Export
 MoviePy and FFmpeg merge the audio with the video and output the final MP4 file into the `public/outputs` directory.
@@ -70,12 +70,13 @@ MoviePy and FFmpeg merge the audio with the video and output the final MP4 file 
 
 ## Technologies Used
 
-* Gemini text models — prompt breakdown, segment generation, narration creation
-* Gemini image & video models — all visual asset generation
-* Gemini TTS — narration voice synthesis
-* MoviePy — assembling media, applying effects, composing final video
-* FFmpeg — encoding, audio stretching, trimming, padding, final export
-* Python utilities — orchestration, file handling, folder management
+- Gemini text models — prompt breakdown, segment generation, narration creation
+- Gemini image & video models — all visual asset generation
+- Gemini TTS — narration voice synthesis
+- MoviePy — assembling media, applying effects, composing final video
+- FFmpeg — encoding, audio stretching, trimming, padding, final export
+- Python utilities — orchestration, file handling, folder management
+- Librosa & SoundFile — audio processing and cleanup
 
 ---
 
@@ -89,3 +90,12 @@ MoviePy and FFmpeg merge the audio with the video and output the final MP4 file 
 Example:
 ```bash
 python main.py
+
+---
+
+## NOTES
+- FFmpeg must be installed and accessible in your PATH.
+
+
+
+
